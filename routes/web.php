@@ -25,7 +25,7 @@ Route::middleware(['auth', 'role:warga'])->prefix('warga')->name('warga.')->grou
 
 // Staff routes
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', StaffDashboard::class)->name('dashboard');
+    Route::get('/dashboard', StaffDashboard::class)->name('dashboard');
     Route::get('/pengajuan', PengajuanIndex::class)->name('pengajuan.index');
     Route::get('/pengajuan/{pengajuan}', PengajuanDetail::class)->name('pengajuan.show');
     Route::get('/master-surat', MasterSurat::class)->name('master-surat');
