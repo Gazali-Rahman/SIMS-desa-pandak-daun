@@ -48,24 +48,16 @@
                             <td class="py-4 px-6 text-slate-300 font-mono">{{ $item->kode }}</td>
                             <td class="py-4 px-6">
                                 <div class="flex flex-wrap gap-1">
-                                    @if (isset($item->syarat['ktp']) && $item->syarat['ktp'])
-                                        <span
-                                            class="text-[10px] px-2 py-0.5 bg-slate-700 rounded border border-slate-600 text-slate-300">KTP</span>
-                                    @endif
-                                    @if (isset($item->syarat['kk']) && $item->syarat['kk'])
-                                        <span
-                                            class="text-[10px] px-2 py-0.5 bg-slate-700 rounded border border-slate-600 text-slate-300">KK</span>
-                                    @endif
-                                    @if (isset($item->syarat['pengantar_rt']) && $item->syarat['pengantar_rt'])
-                                        <span
-                                            class="text-[10px] px-2 py-0.5 bg-slate-700 rounded border border-slate-600 text-slate-300">Pengantar
-                                            RT</span>
-                                    @endif
-                                    @if (isset($item->syarat['foto_usaha']) && $item->syarat['foto_usaha'])
-                                        <span
-                                            class="text-[10px] px-2 py-0.5 bg-slate-700 rounded border border-slate-600 text-slate-300">Foto
-                                            Usaha</span>
-                                    @endif
+                                    @php
+                                        $syaratList = is_array($item->syarat) ? $item->syarat : (json_decode($item->syarat, true) ?? []);
+                                    @endphp
+                                    @foreach($syaratList as $key => $value)
+                                        @if(is_array($value) && isset($value['label']))
+                                            <span class="text-[10px] px-2 py-0.5 bg-slate-700 rounded border border-slate-600 text-slate-300">{{ $value['label'] }}</span>
+                                        @elseif($value === true)
+                                            <span class="text-[10px] px-2 py-0.5 bg-slate-700 rounded border border-slate-600 text-slate-300 uppercase">{{ str_replace('_', ' ', $key) }}</span>
+                                        @endif
+                                    @endforeach
                                 </div>
                             </td>
                             <td class="py-4 px-6">
@@ -143,32 +135,51 @@
                                 placeholder="Penjelasan mengenai fungsi surat ini..."></textarea>
                         </div>
 
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-slate-300 mb-3">Persyaratan Dokumen
-                                (Checklist)</label>
-                            <div
-                                class="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" wire:model="syarat_ktp"
-                                        class="w-4 h-4 rounded border-slate-600 text-indigo-500 focus:ring-indigo-500 bg-slate-700">
-                                    <span class="text-sm text-slate-300">Foto KTP</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" wire:model="syarat_kk"
-                                        class="w-4 h-4 rounded border-slate-600 text-indigo-500 focus:ring-indigo-500 bg-slate-700">
-                                    <span class="text-sm text-slate-300">Foto KK</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" wire:model="syarat_pengantar_rt"
-                                        class="w-4 h-4 rounded border-slate-600 text-indigo-500 focus:ring-indigo-500 bg-slate-700">
-                                    <span class="text-sm text-slate-300">Pengantar RT/RW</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" wire:model="syarat_foto_usaha"
-                                        class="w-4 h-4 rounded border-slate-600 text-indigo-500 focus:ring-indigo-500 bg-slate-700">
-                                    <span class="text-sm text-slate-300">Foto Usaha</span>
-                                </label>
+                        <div class="md:col-span-2 mt-2 border-t border-slate-700 pt-4">
+                            <div class="flex justify-between items-center mb-3">
+                                <label class="block text-sm font-medium text-slate-300">Persyaratan Dokumen</label>
+                                <button type="button" wire:click="addSyarat"
+                                    class="px-3 py-1 bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 rounded text-xs font-medium transition-colors flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    Tambah Syarat
+                                </button>
                             </div>
+
+                            @if (empty($syarat_dokumen))
+                                <div
+                                    class="text-xs text-slate-500 text-center py-4 bg-slate-800/30 rounded border border-slate-700/50">
+                                    Tidak ada dokumen yang diwajibkan.
+                                </div>
+                            @else
+                                <div class="space-y-3">
+                                    @foreach ($syarat_dokumen as $index => $doc)
+                                        <div class="flex gap-3 items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                                            <div class="flex-1">
+                                                <input type="text"
+                                                    wire:model="syarat_dokumen.{{ $index }}.label"
+                                                    class="input-field text-sm"
+                                                    placeholder="Nama Dokumen (Cth: Surat Kuasa, Fotocopy KTP)">
+                                                @error("syarat_dokumen.$index.label")
+                                                    <span class="text-xs text-red-500">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <button type="button" wire:click="removeSyarat({{ $index }})"
+                                                class="p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded transition-colors">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                    </path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
                         <div class="md:col-span-2 mt-4 border-t border-slate-700 pt-4">
                             <div class="flex justify-between items-center mb-3">

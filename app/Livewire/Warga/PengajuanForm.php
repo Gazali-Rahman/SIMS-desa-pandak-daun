@@ -41,6 +41,37 @@ class PengajuanForm extends Component
         return JenisSurat::find($this->jenis_surat_id);
     }
 
+    /**
+     * Normalize old syarat format to new format
+     */
+    private function normalizeSyarat($syaratData)
+    {
+        if (empty($syaratData)) return [];
+        
+        $normalized = [];
+        $isOldFormat = false;
+        foreach ($syaratData as $key => $value) {
+            if (is_bool($value)) {
+                $isOldFormat = true;
+                break;
+            }
+        }
+
+        if ($isOldFormat) {
+            foreach ($syaratData as $key => $is_required) {
+                if ($is_required) {
+                    $normalized[] = [
+                        'name' => $key,
+                        'label' => ucwords(str_replace('_', ' ', $key))
+                    ];
+                }
+            }
+            return $normalized;
+        }
+
+        return is_array($syaratData) ? $syaratData : [];
+    }
+
     public function selectSurat($id)
     {
         $this->jenis_surat_id = $id;
@@ -70,11 +101,12 @@ class PengajuanForm extends Component
             $rules = [];
             $surat = $this->selectedSurat;
 
-            if ($surat && is_array($surat->syarat)) {
-                foreach ($surat->syarat as $key => $is_required) {
-                    if ($is_required) {
-                        $rules['dokumen.' . $key] = 'required|image|max:2048';
-                    }
+            if ($surat) {
+                $syaratData = is_array($surat->syarat) ? $surat->syarat : json_decode($surat->syarat, true) ?? [];
+                $syaratList = $this->normalizeSyarat($syaratData);
+                
+                foreach ($syaratList as $doc) {
+                    $rules['dokumen.' . $doc['name']] = 'required|image|max:2048';
                 }
             }
 
@@ -99,9 +131,13 @@ class PengajuanForm extends Component
         $surat = $this->selectedSurat;
 
         // Upload dynamic files
-        if ($surat && is_array($surat->syarat)) {
-            foreach ($surat->syarat as $key => $is_required) {
-                if ($is_required && isset($this->dokumen[$key])) {
+        if ($surat) {
+            $syaratData = is_array($surat->syarat) ? $surat->syarat : json_decode($surat->syarat, true) ?? [];
+            $syaratList = $this->normalizeSyarat($syaratData);
+            
+            foreach ($syaratList as $doc) {
+                $key = $doc['name'];
+                if (isset($this->dokumen[$key])) {
                     $paths[$key] = $this->dokumen[$key]->store("pengajuan/$key", 'public');
                 }
             }

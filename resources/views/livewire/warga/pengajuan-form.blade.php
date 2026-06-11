@@ -102,37 +102,52 @@
                 
                 <div class="space-y-6">
                     @php 
-                        $syaratList = is_array($selectedSuratData->syarat) ? $selectedSuratData->syarat : (json_decode($selectedSuratData->syarat, true) ?? []); 
+                        $syaratData = is_array($selectedSuratData->syarat) ? $selectedSuratData->syarat : (json_decode($selectedSuratData->syarat, true) ?? []);
+                        // Need to duplicate normalize logic here or use a static/helper approach. 
+                        // Since this is blade, let's write a quick inline normalization.
+                        $syaratList = [];
+                        $isOldFormat = false;
+                        foreach ($syaratData as $key => $value) {
+                            if (is_bool($value)) { $isOldFormat = true; break; }
+                        }
+                        if ($isOldFormat) {
+                            foreach ($syaratData as $key => $is_required) {
+                                if ($is_required) {
+                                    $syaratList[] = ['name' => $key, 'label' => ucwords(str_replace('_', ' ', $key))];
+                                }
+                            }
+                        } else {
+                            $syaratList = $syaratData;
+                        }
                     @endphp
                     
-                    @foreach($syaratList as $key => $is_required)
-                        @if($is_required)
-                            <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-2 capitalize">{{ str_replace('_', ' ', $key) }} <span class="text-red-400">*</span></label>
-                                <div class="flex items-center gap-4">
-                                    <div class="w-32 h-24 border-2 border-dashed border-slate-600 rounded-lg flex flex-col items-center justify-center bg-slate-800/50 hover:bg-slate-800 transition-colors relative overflow-hidden">
-                                        @if(isset($dokumen[$key]) && $dokumen[$key])
-                                            <img src="{{ $dokumen[$key]->temporaryUrl() }}" class="object-cover w-full h-full">
-                                            <button type="button" wire:click="$set('dokumen.{{ $key }}', null)" class="absolute top-1 right-1 bg-red-500/80 p-1 rounded-full text-white hover:bg-red-500">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                            </button>
-                                        @else
-                                            <svg class="w-8 h-8 text-slate-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                            <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Pilih Foto</span>
-                                            <input type="file" wire:model.live="dokumen.{{ $key }}" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
-                                        @endif
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-xs text-slate-400 mb-1">Pastikan foto terlihat jelas dan tidak terpotong.</p>
-                                        <p class="text-xs text-slate-500">Format: JPG, PNG. Max: 2MB.</p>
-                                        @error('dokumen.'.$key) <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
-                                    </div>
+                    @foreach($syaratList as $doc)
+                        @php $key = $doc['name']; @endphp
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2 capitalize">{{ $doc['label'] }} <span class="text-red-400">*</span></label>
+                            <div class="flex items-center gap-4">
+                                <div class="w-32 h-24 border-2 border-dashed border-slate-600 rounded-lg flex flex-col items-center justify-center bg-slate-800/50 hover:bg-slate-800 transition-colors relative overflow-hidden">
+                                    @if(isset($dokumen[$key]) && $dokumen[$key])
+                                        <img src="{{ $dokumen[$key]->temporaryUrl() }}" class="object-cover w-full h-full">
+                                        <button type="button" wire:click="$set('dokumen.{{ $key }}', null)" class="absolute top-1 right-1 bg-red-500/80 p-1 rounded-full text-white hover:bg-red-500">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        </button>
+                                    @else
+                                        <svg class="w-8 h-8 text-slate-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Pilih Foto</span>
+                                        <input type="file" wire:model.live="dokumen.{{ $key }}" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
+                                    @endif
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-xs text-slate-400 mb-1">Pastikan foto terlihat jelas dan tidak terpotong.</p>
+                                    <p class="text-xs text-slate-500">Format: JPG, PNG. Max: 2MB.</p>
+                                    @error('dokumen.'.$key) <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                                 </div>
                             </div>
-                        @endif
+                        </div>
                     @endforeach
                     
-                    @if(count(array_filter($syaratList)) === 0)
+                    @if(count($syaratList) === 0)
                         <div class="p-6 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-center">
                             <svg class="w-10 h-10 mx-auto mb-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <p class="font-medium">Tidak ada berkas yang wajib diunggah.</p>
@@ -186,16 +201,31 @@
                     @endif
 
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4 pt-4 border-t border-slate-800">
-                        @foreach((is_array($selectedSuratData->syarat) ? $selectedSuratData->syarat : (json_decode($selectedSuratData->syarat, true) ?? [])) as $key => $is_required)
-                            @if($is_required)
-                                <div>
-                                    <div class="text-[10px] uppercase tracking-wider text-slate-500 mb-2">Lampiran {{ str_replace('_', ' ', $key) }}</div>
-                                    <div class="flex items-center gap-2 text-sm text-green-400">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                        Terlampir
-                                    </div>
+                        @php 
+                            $syaratData = is_array($selectedSuratData->syarat) ? $selectedSuratData->syarat : (json_decode($selectedSuratData->syarat, true) ?? []);
+                            $syaratList = [];
+                            $isOldFormat = false;
+                            foreach ($syaratData as $key => $value) {
+                                if (is_bool($value)) { $isOldFormat = true; break; }
+                            }
+                            if ($isOldFormat) {
+                                foreach ($syaratData as $key => $is_required) {
+                                    if ($is_required) {
+                                        $syaratList[] = ['name' => $key, 'label' => ucwords(str_replace('_', ' ', $key))];
+                                    }
+                                }
+                            } else {
+                                $syaratList = $syaratData;
+                            }
+                        @endphp
+                        @foreach($syaratList as $doc)
+                            <div>
+                                <div class="text-[10px] uppercase tracking-wider text-slate-500 mb-2">Lampiran {{ $doc['label'] }}</div>
+                                <div class="flex items-center gap-2 text-sm text-green-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    Terlampir
                                 </div>
-                            @endif
+                            </div>
                         @endforeach
                     </div>
                 </div>

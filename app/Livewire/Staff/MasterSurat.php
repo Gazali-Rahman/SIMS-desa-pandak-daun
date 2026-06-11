@@ -23,12 +23,9 @@ class MasterSurat extends Component
     public $kode;
     public $deskripsi;
     public $icon;
-    public $syarat_ktp = true;
-    public $syarat_kk = true;
-    public $syarat_pengantar_rt = false;
-    public $syarat_foto_usaha = false;
-
-    // Dynamic form fields
+    
+    // Dynamic form fields and requirements
+    public $syarat_dokumen = [];
     public $form_fields = [];
 
     public function mount()
@@ -52,6 +49,51 @@ class MasterSurat extends Component
         $this->form_fields = array_values($this->form_fields);
     }
 
+    public function addSyarat()
+    {
+        $this->syarat_dokumen[] = ['name' => '', 'label' => ''];
+    }
+
+    public function removeSyarat($index)
+    {
+        unset($this->syarat_dokumen[$index]);
+        $this->syarat_dokumen = array_values($this->syarat_dokumen);
+    }
+
+    /**
+     * Normalize old syarat format (associative boolean array) to new format (array of objects)
+     */
+    private function normalizeSyarat($syaratData)
+    {
+        if (empty($syaratData)) return [];
+        
+        $normalized = [];
+        // Check if it's the old format (associative array with boolean values)
+        // A simple heuristic is checking if the first element is a boolean or if keys are strings like 'ktp'
+        $isOldFormat = false;
+        foreach ($syaratData as $key => $value) {
+            if (is_bool($value)) {
+                $isOldFormat = true;
+                break;
+            }
+        }
+
+        if ($isOldFormat) {
+            foreach ($syaratData as $key => $is_required) {
+                if ($is_required) {
+                    $normalized[] = [
+                        'name' => $key,
+                        'label' => ucwords(str_replace('_', ' ', $key))
+                    ];
+                }
+            }
+            return $normalized;
+        }
+
+        // It's the new format, just return it
+        return is_array($syaratData) ? $syaratData : [];
+    }
+
     public function openModal($id = null)
     {
         $this->resetFields();
@@ -64,11 +106,8 @@ class MasterSurat extends Component
             $this->deskripsi = $surat->deskripsi;
             $this->icon = $surat->icon;
 
-            $syarat = is_array($surat->syarat) ? $surat->syarat : json_decode($surat->syarat, true) ?? [];
-            $this->syarat_ktp = $syarat['ktp'] ?? false;
-            $this->syarat_kk = $syarat['kk'] ?? false;
-            $this->syarat_pengantar_rt = $syarat['pengantar_rt'] ?? false;
-            $this->syarat_foto_usaha = $syarat['foto_usaha'] ?? false;
+            $syaratRaw = is_array($surat->syarat) ? $surat->syarat : json_decode($surat->syarat, true) ?? [];
+            $this->syarat_dokumen = $this->normalizeSyarat($syaratRaw);
 
             $this->form_fields = is_array($surat->form_fields) ? $surat->form_fields : json_decode($surat->form_fields, true) ?? [];
         } else {
@@ -91,10 +130,7 @@ class MasterSurat extends Component
         $this->kode = '';
         $this->deskripsi = '';
         $this->icon = '';
-        $this->syarat_ktp = true;
-        $this->syarat_kk = true;
-        $this->syarat_pengantar_rt = false;
-        $this->syarat_foto_usaha = false;
+        $this->syarat_dokumen = [];
         $this->form_fields = [];
     }
 
@@ -108,18 +144,21 @@ class MasterSurat extends Component
             'form_fields.*.name' => 'required|string',
             'form_fields.*.label' => 'required|string',
             'form_fields.*.type' => 'required|string',
+            'syarat_dokumen.*.label' => 'required|string',
         ]);
-
-        $syarat = [
-            'ktp' => $this->syarat_ktp,
-            'kk' => $this->syarat_kk,
-            'pengantar_rt' => $this->syarat_pengantar_rt,
-            'foto_usaha' => $this->syarat_foto_usaha,
-        ];
 
         // Format names to lowercase snake_case automatically
         foreach ($this->form_fields as &$field) {
             $field['name'] = strtolower(str_replace(' ', '_', $field['name']));
+        }
+        
+        foreach ($this->syarat_dokumen as &$doc) {
+            if (empty($doc['name'])) {
+                // Auto generate name from label if empty
+                $doc['name'] = strtolower(str_replace(' ', '_', $doc['label']));
+            } else {
+                $doc['name'] = strtolower(str_replace(' ', '_', $doc['name']));
+            }
         }
 
         if ($this->isEditMode) {
@@ -129,7 +168,7 @@ class MasterSurat extends Component
                 'kode' => strtoupper($this->kode),
                 'deskripsi' => $this->deskripsi,
                 'icon' => $this->icon,
-                'syarat' => $syarat,
+                'syarat' => $this->syarat_dokumen,
                 'form_fields' => $this->form_fields,
             ]);
             session()->flash('message', 'Jenis surat berhasil diperbarui.');
@@ -139,7 +178,7 @@ class MasterSurat extends Component
                 'kode' => strtoupper($this->kode),
                 'deskripsi' => $this->deskripsi,
                 'icon' => $this->icon,
-                'syarat' => $syarat,
+                'syarat' => $this->syarat_dokumen,
                 'form_fields' => $this->form_fields,
                 'is_active' => true,
             ]);
