@@ -91,15 +91,16 @@
 
     <!-- Modal Form -->
     @if ($isModalOpen)
-        <div
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm overflow-y-auto">
-            <div class="glass-card w-full max-w-2xl p-6 animate-[fadeIn_0.2s_ease-out] my-8">
-                <h3 class="text-xl font-bold text-white mb-6 border-b border-slate-700 pb-3">
-                    {{ $isEditMode ? 'Edit Jenis Surat' : 'Tambah Jenis Surat Baru' }}
-                </h3>
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
+            <form wire:submit="save" class="glass-card w-full max-w-2xl max-h-[90vh] flex flex-col animate-[fadeIn_0.2s_ease-out]">
+                <div class="p-6 border-b border-slate-700 shrink-0">
+                    <h3 class="text-xl font-bold text-white">
+                        {{ $isEditMode ? 'Edit Jenis Surat' : 'Tambah Jenis Surat Baru' }}
+                    </h3>
+                </div>
 
-                <form wire:submit="save">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="p-6 overflow-y-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-slate-300 mb-2">Nama Surat</label>
                             <input type="text" wire:model="nama" class="input-field"
@@ -251,19 +252,19 @@
                             @endif
                         </div>
                     </div>
+                </div>
 
-                    <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
-                        <button type="button" wire:click="closeModal"
-                            class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-medium transition-colors">
-                            Batal
-                        </button>
-                        <button type="submit" class="btn-primary px-5 py-2.5">
-                            <span wire:loading.remove wire:target="save">Simpan</span>
-                            <span wire:loading wire:target="save">Menyimpan...</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div class="p-6 border-t border-slate-700 shrink-0 flex justify-end gap-3">
+                    <button type="button" wire:click="closeModal"
+                        class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-medium transition-colors">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn-primary px-5 py-2.5">
+                        <span wire:loading.remove wire:target="save">Simpan</span>
+                        <span wire:loading wire:target="save">Menyimpan...</span>
+                    </button>
+                </div>
+            </form>
         </div>
     @endif
 </div>
