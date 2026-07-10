@@ -17,24 +17,16 @@ class Dashboard extends Component
 {
     public function setuju(PengajuanSurat $pengajuan)
     {
-        $count = PengajuanSurat::where('jenis_surat_id', $pengajuan->jenis_surat_id)
-            ->where('status', 'selesai')
-            ->whereYear('created_at', date('Y'))
-            ->count() + 1;
+        $pengajuan->generateNomorSuratAndApprove();
 
-        $kode = $pengajuan->jenisSurat->kode ?? 'SRT';
-        $urutan = str_pad($count, 3, '0', STR_PAD_LEFT);
+        // Kirim email notifikasi ke warga
+        try {
+            \Illuminate\Support\Facades\Mail::to($pengajuan->user->email)->send(new \App\Mail\SuratSelesaiMail($pengajuan));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send approval email: ' . $e->getMessage());
+        }
 
-        $map = [1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII'];
-        $romawiBulan = $map[date('n')];
-        $tahun = date('Y');
-
-        $nomorSurat = "140/$urutan/$kode/$romawiBulan/$tahun";
-
-        $pengajuan->update([
-            'status' => 'selesai',
-            'nomor_surat' => $nomorSurat,
-        ]);
+        $pengajuan->user->notify(new \App\Notifications\StatusPengajuanNotification($pengajuan));
 
         session()->flash('message', 'Surat berhasil disetujui.');
     }

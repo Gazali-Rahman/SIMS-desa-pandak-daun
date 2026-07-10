@@ -28,7 +28,7 @@ class PengajuanDetail extends Component
     public function updateStatus()
     {
         $this->validate([
-            'status' => 'required|in:menunggu,diproses,selesai,ditolak',
+            'status' => 'required|in:menunggu,diproses,ditolak',
             'catatan' => 'required_if:status,ditolak',
         ]);
 

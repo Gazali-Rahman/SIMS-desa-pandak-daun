@@ -41,9 +41,11 @@ class RiwayatPengajuan extends Component
         }
 
         if ($this->search) {
-            $query->whereHas('jenisSurat', function ($q) {
-                $q->where('nama', 'like', '%' . $this->search . '%');
-            })->orWhere('nomor_surat', 'like', '%' . $this->search . '%');
+            $query->where(function ($q) {
+                $q->whereHas('jenisSurat', function ($sub) {
+                    $sub->where('nama', 'like', '%' . $this->search . '%');
+                })->orWhere('nomor_surat', 'like', '%' . $this->search . '%');
+            });
         }
 
         $pengajuan = $query->paginate(10);
