@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app', [
-    'title' => 'Ajukan Surat - SIMS',
+    'title' => 'Ajukan Surat - APLIKASI PELAYANAN ADMINISTRASI PENDUDUK DESA PANDAK DAUN BERBASIS WEB',
     'header' => 'Pengajuan Surat Baru',
     'sidebar' => 'components.sidebar.main'
 ])]

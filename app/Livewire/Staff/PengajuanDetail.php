@@ -7,7 +7,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app', [
-    'title' => 'Detail Pengajuan - SIMS',
+    'title' => 'Detail Pengajuan - APLIKASI PELAYANAN ADMINISTRASI PENDUDUK DESA PANDAK DAUN BERBASIS WEB',
     'header' => 'Verifikasi Berkas Pengajuan',
     'sidebar' => 'components.sidebar.main'
 ])]

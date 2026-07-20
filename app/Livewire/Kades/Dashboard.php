@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app', [
-    'title' => 'Dashboard Kepala Desa - SIMS',
+    'title' => 'Dashboard Kepala Desa - APLIKASI PELAYANAN ADMINISTRASI PENDUDUK DESA PANDAK DAUN BERBASIS WEB',
     'header' => 'Dashboard Kepala Desa',
     'sidebar' => 'components.sidebar.main'
 ])]

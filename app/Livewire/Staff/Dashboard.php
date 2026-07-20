@@ -8,7 +8,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app', [
-    'title' => 'Dashboard Staff - SIMS',
+    'title' => 'Dashboard Staff - APLIKASI PELAYANAN ADMINISTRASI PENDUDUK DESA PANDAK DAUN BERBASIS WEB',
     'header' => 'Dashboard Staff',
     'sidebar' => 'components.sidebar.main'
 ])]

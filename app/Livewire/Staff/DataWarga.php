@@ -8,7 +8,7 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app', [
-    'title' => 'Data Warga - SIMS',
+    'title' => 'Data Warga - APLIKASI PELAYANAN ADMINISTRASI PENDUDUK DESA PANDAK DAUN BERBASIS WEB',
     'header' => 'Data Penduduk / Warga',
     'sidebar' => 'components.sidebar.main'
 ])]

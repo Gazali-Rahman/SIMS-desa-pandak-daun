@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ $title ?? 'SIMS - Desa Pandak Daun' }}</title>
+        <title>{{ $title ?? 'APLIKASI PELAYANAN ADMINISTRASI PENDUDUK DESA PANDAK DAUN BERBASIS WEB' }}</title>
         
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

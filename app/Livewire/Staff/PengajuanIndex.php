@@ -9,7 +9,7 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app', [
-    'title' => 'Pengajuan Masuk - SIMS',
+    'title' => 'Pengajuan Masuk - APLIKASI PELAYANAN ADMINISTRASI PENDUDUK DESA PANDAK DAUN BERBASIS WEB',
     'header' => 'Semua Pengajuan Masuk',
     'sidebar' => 'components.sidebar.main'
 ])]

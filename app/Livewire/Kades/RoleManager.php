@@ -8,7 +8,7 @@ use Spatie\Permission\Models\Permission;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app', [
-    'title' => 'Manajemen Role - SIMS',
+    'title' => 'Manajemen Role - APLIKASI PELAYANAN ADMINISTRASI PENDUDUK DESA PANDAK DAUN BERBASIS WEB',
     'header' => 'Manajemen Role & Hak Akses',
     'sidebar' => 'components.sidebar.main'
 ])]

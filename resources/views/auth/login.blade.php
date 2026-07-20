@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <x-slot:title>Login - SIMS Desa Pandak Daun</x-slot:title>
+    <x-slot:title>Login - APLIKASI PELAYANAN ADMINISTRASI PENDUDUK DESA PANDAK DAUN BERBASIS WEB</x-slot:title>
 
     <div class="glass-card p-8 w-full">
         <div class="text-center mb-8">

@@ -7,7 +7,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app', [
-    'title' => 'Master Jenis Surat - SIMS',
+    'title' => 'Master Jenis Surat - APLIKASI PELAYANAN ADMINISTRASI PENDUDUK DESA PANDAK DAUN BERBASIS WEB',
     'header' => 'Master Jenis Surat',
     'sidebar' => 'components.sidebar.main'
 ])]

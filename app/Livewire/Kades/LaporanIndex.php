@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app', [
-    'title' => 'Laporan Pengajuan - SIMS',
+    'title' => 'Laporan Pengajuan - APLIKASI PELAYANAN ADMINISTRASI PENDUDUK DESA PANDAK DAUN BERBASIS WEB',
     'header' => 'Laporan Layanan Administrasi',
     'sidebar' => 'components.sidebar.main'
 ])]

@@ -9,7 +9,7 @@ use Spatie\Permission\Models\Role;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app', [
-    'title' => 'Manajemen Pengguna - SIMS',
+    'title' => 'Manajemen Pengguna - APLIKASI PELAYANAN ADMINISTRASI PENDUDUK DESA PANDAK DAUN BERBASIS WEB',
     'header' => 'Manajemen Pengguna',
     'sidebar' => 'components.sidebar.main'
 ])]
