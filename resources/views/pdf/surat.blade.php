@@ -84,10 +84,10 @@
 <body>
 
     <div class="kop-surat">
-        <h1>PEMERINTAH KABUPATEN BARITO KUALA</h1>
-        <h2>KECAMATAN ALALAK</h2>
+        <h1>PEMERINTAH KABUPATEN BANJAR</h1>
+        <h2>KECAMATAN KARANG INTAN</h2>
         <h1>DESA PANDAK DAUN</h1>
-        <p>Jl. Handil Bakti, Desa Pandak Daun, Kode Pos 70582</p>
+        <p>Jl. Melati, Desa Pandak Daun RT 01 RW 01, Kode Pos 70661</p>
     </div>
 
     <div class="judul-surat">
@@ -96,7 +96,7 @@
     </div>
 
     <div class="content">
-        <p>Yang bertanda tangan di bawah ini Kepala Desa Pandak Daun, Kecamatan Alalak, Kabupaten Barito Kuala, menerangkan dengan sebenarnya bahwa:</p>
+        <p>Yang bertanda tangan di bawah ini Kepala Desa Pandak Daun, Kecamatan Karang Intan, Kabupaten Banjar, menerangkan dengan sebenarnya bahwa:</p>
 
         <table class="table-data">
             <tr>
@@ -152,7 +152,7 @@
             <div class="signature-space">
                 <!-- Tanda Tangan Elektronik placeholder -->
             </div>
-            <p><strong><u>M. RIYANDI</u></strong></p>
+            <p><strong><u>SARBANI</u></strong></p>
         </div>
     </div>
 
