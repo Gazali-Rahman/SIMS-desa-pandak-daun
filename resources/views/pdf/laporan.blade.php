@@ -80,7 +80,7 @@
     <div class="signature">
         <p>Pandak Daun, {{ \Carbon\Carbon::now()->format('d F Y') }}</p>
         <p>Kepala Desa Pandak Daun</p>
-        <div class="name">MUHAMMAD RIYANDI</div>
+        <div class="name">SARBANI</div>
     </div>
 </body>
 </html>
