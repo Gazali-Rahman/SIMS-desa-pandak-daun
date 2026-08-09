@@ -17,12 +17,14 @@ class Dashboard extends Component
     public function render()
     {
         $stats = [
+            'total_pengajuan' => PengajuanSurat::count(),
             'hari_ini' => PengajuanSurat::whereDate('created_at', Carbon::today())->count(),
             'perlu_verifikasi' => PengajuanSurat::where('status', 'menunggu')->count(),
             'sedang_diproses' => PengajuanSurat::where('status', 'diproses')->count(),
             'selesai_bulan_ini' => PengajuanSurat::whereMonth('created_at', Carbon::now()->month)
                 ->whereYear('created_at', Carbon::now()->year)
                 ->where('status', 'selesai')->count(),
+            'ditolak' => PengajuanSurat::where('status', 'ditolak')->count(),
         ];
 
         $pengajuanTerbaru = PengajuanSurat::with(['user', 'jenisSurat'])

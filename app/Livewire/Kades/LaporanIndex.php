@@ -63,6 +63,7 @@ class LaporanIndex extends Component
         $stats = [
             'total' => (clone $query)->count(),
             'disetujui' => (clone $query)->where('status', 'selesai')->count(),
+            'menunggu' => (clone $query)->where('status', 'menunggu')->count(),
             'ditolak' => (clone $query)->where('status', 'ditolak')->count(),
         ];
 

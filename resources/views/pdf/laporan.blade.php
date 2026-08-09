@@ -82,5 +82,5 @@
         <p>Kepala Desa Pandak Daun</p>
         <div class="name">SARBANI</div>
     </div>
-</body>
+</body> 
 </html>

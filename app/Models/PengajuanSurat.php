@@ -36,13 +36,15 @@ class PengajuanSurat extends Model
     public function generateNomorSuratAndApprove()
     {
         return \Illuminate\Support\Facades\DB::transaction(function () {
+            // Lock the parent record first to prevent race condition
+            $jenisSurat = $this->jenisSurat()->lockForUpdate()->first();
+
             $count = self::where('jenis_surat_id', $this->jenis_surat_id)
                 ->where('status', 'selesai')
                 ->whereYear('created_at', date('Y'))
-                ->lockForUpdate()
                 ->count() + 1;
 
-            $kode = $this->jenisSurat->kode ?? 'SRT';
+            $kode = $jenisSurat->kode ?? 'SRT';
             $urutan = str_pad($count, 3, '0', STR_PAD_LEFT);
             
             $map = [1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V', 6 => 'VI', 7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII'];
