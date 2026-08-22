@@ -157,6 +157,24 @@ class PengajuanForm extends Component
         $admins = \App\Models\User::role(['staff', 'kepala_desa'])->get();
         \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\PengajuanBaruNotification($pengajuan));
 
+        // Telegram Bot Notification
+        $botToken = env('TELEGRAM_BOT_TOKEN');
+        $adminChatId = env('TELEGRAM_ADMIN_CHAT_ID'); // ID grup atau admin
+        if (!empty($botToken) && !empty($adminChatId)) {
+            $jenisSurat = $this->selectedSurat->nama ?? 'Surat';
+            $namaWarga = Auth::user()->name;
+            $text = "🔔 *Pemberitahuan Pengajuan Baru*\n\n"
+                  . "Warga atas nama *$namaWarga* baru saja mengajukan *$jenisSurat*.\n"
+                  . "Keperluan: {$this->keperluan}\n\n"
+                  . "Silakan cek di dashboard aplikasi.";
+                  
+            \Illuminate\Support\Facades\Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                'chat_id' => $adminChatId,
+                'text' => $text,
+                'parse_mode' => 'Markdown'
+            ]);
+        }
+
         session()->flash('message', 'Pengajuan surat berhasil dikirim.');
         return redirect()->route('warga.dashboard');
     }

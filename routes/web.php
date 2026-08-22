@@ -86,3 +86,7 @@ Route::middleware(['auth'])->group(function () {
         return $pdf->stream('Surat_' . $pengajuan->jenisSurat->kode . '_' . $pengajuan->user->name . '.pdf');
     })->name('surat.cetak');
 });
+
+// Telegram AI Webhook
+Route::post('/webhook/telegram', [\App\Http\Controllers\Api\TelegramWebhookController::class, 'handle']);
+Route::get('/webhook/telegram/set', [\App\Http\Controllers\Api\TelegramWebhookController::class, 'setWebhook']);
